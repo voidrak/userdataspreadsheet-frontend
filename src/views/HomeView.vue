@@ -191,7 +191,7 @@ const toggleSidebar = () => {
     <!-- Document Preview Section -->
     <div
       :class="[
-        'flex-1 flex justify-center -translate-x-32 items-center p-6 transition-all duration-300',
+        'flex-1 flex mt-24 -translate-x-48   p-6 transition-all duration-300',
         sidebarOpen ? 'lg:ml-0' : 'ml-0',
       ]"
     >
