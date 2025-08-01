@@ -303,9 +303,13 @@ const submitForm = async () => {
         </ol>
         <!-- Header text before numbered list -->
         <div class="relative z-10 text-sn font-sans mt-1 font-bold ml-8 mb-2">
-          <div>
-            የፈቃድ ስጪው ስምና ፊርማ፡ <span class="ml-2">________________</span>
-          </div>
+          <!-- Stamp image -->
+          <img
+            src="/stamp.png"
+            alt="Official Stamp"
+            class="w-22 h-22 object-contain mb-2 absolute -top-6 left-40"
+          />
+          <div>የፈቃድ ስጪው ስምና ፊርማ፡</div>
         </div>
 
         <!-- Footer notes -->
