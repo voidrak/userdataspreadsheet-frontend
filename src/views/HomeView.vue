@@ -17,7 +17,7 @@ const formData = ref({
 });
 
 // Sidebar visibility
-const sidebarOpen = ref(true);
+const sidebarOpen = ref(false);
 
 const toggleSidebar = () => {
   sidebarOpen.value = !sidebarOpen.value;
