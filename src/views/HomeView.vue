@@ -26,21 +26,24 @@ const toggleSidebar = () => {
 const submitForm = async () => {
   isSubmitting.value = true;
   try {
-    const response = await fetch("http://127.0.0.1:8000/api/post-users", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        vehicle_owner: formData.value.vehicle_owner,
-        vehicle_institution: formData.value.vehicle_institution,
-        vehicle_type: formData.value.vehicle_type,
-        vehicle_plate_number: formData.value.vehicle_plate_number,
-        permit_reason: formData.value.permit_reason,
-        permit_duration: formData.value.permit_duration,
-        receipt_number: formData.value.receipt_number,
-      }),
-    });
+    const response = await fetch(
+      "https://userdataspreadsheet-production.up.railway.app/api/post-users",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          vehicle_owner: formData.value.vehicle_owner,
+          vehicle_institution: formData.value.vehicle_institution,
+          vehicle_type: formData.value.vehicle_type,
+          vehicle_plate_number: formData.value.vehicle_plate_number,
+          permit_reason: formData.value.permit_reason,
+          permit_duration: formData.value.permit_duration,
+          receipt_number: formData.value.receipt_number,
+        }),
+      }
+    );
 
     if (response.ok) {
       const result = await response.json();
