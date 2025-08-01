@@ -1,26 +1,60 @@
 <script setup>
 import { ref } from "vue";
 
-// Form data
+// Form data matching API structure
 const formData = ref({
   date: "16/10/2017ዓ.ም",
   number: "216",
-  ownerName: "አቶ ካሳ ደምሳ",
-  driverName: "አቶ ካሳ ደምሳ",
-  vehicleType: "ሶፍት-ትዮታ",
-  plateNumber: "አን-02-B94700",
-  vehicleModel: "ከርሲት አንድ",
-  vehicleYear: "የተሽከርካሪ ዓመት ማህበረሰብ የሚሰጥበት",
-  ticketStartDate: "16/11/2017ዓ.ም",
-  ticketEndDate: "15/11/2018ዓ.ም",
-  ticketNumber: "FT25128Z9JQR",
+  vehicle_owner: "አሰር ኮንስትራክሽን ሃላ/የተ/የግ/ማህበር",
+  vehicle_institution: "አሰር ኮንስትራክሽን ሃላ/የተ/የግ/ማህበር",
+  vehicle_type: "የመስክ ተሽከርካሪ",
+  vehicle_plate_number: "አአ-03-B83219",
+  permit_reason: "ከደህንነት አንጻር",
+  permit_duration: "ከ28/01/2017ዓ/ም እስከ 27/01/2018ዓ/ም",
+  receipt_number: "TT2428ZOCOP",
 });
 
 // Sidebar visibility
 const sidebarOpen = ref(false);
+const isSubmitting = ref(false);
 
 const toggleSidebar = () => {
   sidebarOpen.value = !sidebarOpen.value;
+};
+
+// Submit form
+const submitForm = async () => {
+  isSubmitting.value = true;
+  try {
+    const response = await fetch("http://127.0.0.1:8000/api/post-users", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        vehicle_owner: formData.value.vehicle_owner,
+        vehicle_institution: formData.value.vehicle_institution,
+        vehicle_type: formData.value.vehicle_type,
+        vehicle_plate_number: formData.value.vehicle_plate_number,
+        permit_reason: formData.value.permit_reason,
+        permit_duration: formData.value.permit_duration,
+        receipt_number: formData.value.receipt_number,
+      }),
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      alert("Data submitted successfully!");
+      console.log("Success:", result);
+    } else {
+      throw new Error("Failed to submit data");
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    alert("Error submitting data. Please try again.");
+  } finally {
+    isSubmitting.value = false;
+  }
 };
 </script>
 
@@ -71,9 +105,9 @@ const toggleSidebar = () => {
     <!-- Form Sidebar -->
     <div
       :class="[
-        'fixed lg:relative top-0 left-0   h-full bg-white shadow-lg z-40 transition-transform duration-300 ease-in-out',
+        'absolute lg:relative top-0 left-0 h-full bg-white shadow-lg z-40 transition-transform duration-300 ease-in-out',
         sidebarOpen ? 'translate-x-0' : '-translate-x-full',
-        'w-80 lg:w-1/3',
+        'w-80 lg:w-1/3 max-w-[370px]',
       ]"
     >
       <div class="p-6 overflow-y-auto h-full">
@@ -81,7 +115,7 @@ const toggleSidebar = () => {
           Vehicle Information Form
         </h2>
 
-        <form class="space-y-4">
+        <form @submit.prevent="submitForm" class="space-y-4">
           <div>
             <label class="block text-sm font-medium mb-1">Date</label>
             <input
@@ -101,89 +135,88 @@ const toggleSidebar = () => {
           </div>
 
           <div>
-            <label class="block text-sm font-medium mb-1">Owner Name</label>
+            <label class="block text-sm font-medium mb-1">Vehicle Owner</label>
             <input
-              v-model="formData.ownerName"
+              v-model="formData.vehicle_owner"
               type="text"
               class="w-full p-2 border rounded"
+              required
             />
           </div>
 
           <div>
-            <label class="block text-sm font-medium mb-1">Driver Name</label>
+            <label class="block text-sm font-medium mb-1"
+              >Vehicle Institution</label
+            >
             <input
-              v-model="formData.driverName"
+              v-model="formData.vehicle_institution"
               type="text"
               class="w-full p-2 border rounded"
+              required
             />
           </div>
 
           <div>
             <label class="block text-sm font-medium mb-1">Vehicle Type</label>
             <input
-              v-model="formData.vehicleType"
+              v-model="formData.vehicle_type"
               type="text"
               class="w-full p-2 border rounded"
-            />
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium mb-1">Plate Number</label>
-            <input
-              v-model="formData.plateNumber"
-              type="text"
-              class="w-full p-2 border rounded"
-            />
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium mb-1">Vehicle Model</label>
-            <input
-              v-model="formData.vehicleModel"
-              type="text"
-              class="w-full p-2 border rounded"
-            />
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium mb-1">Vehicle Year</label>
-            <input
-              v-model="formData.vehicleYear"
-              type="text"
-              class="w-full p-2 border rounded"
+              required
             />
           </div>
 
           <div>
             <label class="block text-sm font-medium mb-1"
-              >Ticket Start Date</label
+              >Vehicle Plate Number</label
             >
             <input
-              v-model="formData.ticketStartDate"
+              v-model="formData.vehicle_plate_number"
               type="text"
               class="w-full p-2 border rounded"
+              required
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium mb-1">Permit Reason</label>
+            <input
+              v-model="formData.permit_reason"
+              type="text"
+              class="w-full p-2 border rounded"
+              required
             />
           </div>
 
           <div>
             <label class="block text-sm font-medium mb-1"
-              >Ticket End Date</label
+              >Permit Duration</label
             >
             <input
-              v-model="formData.ticketEndDate"
+              v-model="formData.permit_duration"
               type="text"
               class="w-full p-2 border rounded"
+              required
             />
           </div>
 
           <div>
-            <label class="block text-sm font-medium mb-1">Ticket Number</label>
+            <label class="block text-sm font-medium mb-1">Receipt Number</label>
             <input
-              v-model="formData.ticketNumber"
+              v-model="formData.receipt_number"
               type="text"
               class="w-full p-2 border rounded"
+              required
             />
           </div>
+
+          <button
+            type="submit"
+            :disabled="isSubmitting"
+            class="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 disabled:bg-blue-400 transition-colors"
+          >
+            {{ isSubmitting ? "Submitting..." : "Submit" }}
+          </button>
         </form>
       </div>
     </div>
@@ -191,7 +224,7 @@ const toggleSidebar = () => {
     <!-- Document Preview Section -->
     <div
       :class="[
-        'flex-1 flex mt-24 -translate-x-48   p-6 transition-all duration-300',
+        'flex-1 flex justify-center -translate-x-16 mt-16 p-6  transition-all duration-300',
         sidebarOpen ? 'lg:ml-0' : 'ml-0',
       ]"
     >
@@ -202,23 +235,23 @@ const toggleSidebar = () => {
         <img
           src="/logo.webp"
           alt="Logo"
-          class="absolute left-1/2 -translate-x-1/2 top-4 w-28 h-28 object-contain bg-white rounded-full border-2 border-white z-10"
+          class="absolute left-1/2 -translate-x-1/2 top-1 w-32 h-32 object-contain bg-white rounded-full border-2 border-white z-10"
         />
 
         <!-- Top right info -->
         <div class="absolute right-8 top-8 text-right text-sm leading-tight">
           <div>ቀን፡ {{ formData.date }}</div>
           <div>
-            No: <span class="font-bold">{{ formData.number }}</span>
+            No: <span class="font-bold mr-16 mt-1">{{ formData.number }}</span>
           </div>
         </div>
 
         <!-- Headings -->
-        <div class="text-center mt-32 mb-2">
-          <div class="font-bold text-lg">የእንቅስቃሴ እና ተሽከርካሪ ትኬት ማስታወቂያ በሰሌዳ</div>
+        <div class="text-center mt-32 mb-2 underline">
           <div class="font-bold text-lg">
-            በተሽከርካሪ ባለ የሚሰጥበት የትኬት ማስታወቂያ ደብዳቤ
+            በአዲስ አበባ ከተማ አስተዳደር የትራፊክ ማኔጅመንት ባለስልጣን
           </div>
+          <div class="font-bold text-lg">በተሽከርካሪ ላይ የሚለጠፍ የስቲከር ፈቃድ</div>
         </div>
 
         <!-- Vehicle image background -->
@@ -236,48 +269,73 @@ const toggleSidebar = () => {
         />
 
         <!-- Numbered list -->
-        <ol class="relative z-10 text-lg font-sans leading-7 mt-2 ml-2">
+        <ol
+          class="relative z-10 text-lg font-sans leading-7 mt-2 ml-8 list-decimal"
+        >
           <li>
-            <span class="font-bold">የተሽከርካሪ ባለቤት ትኬት ባለቤት፡</span>
-            {{ formData.ownerName }}
+            <span class="font-bold">ፈቃድ ጠያቂው ተሽከርካሪ ባለንብረት:</span>
+            <span class="underline">{{ formData.vehicle_owner }}</span>
           </li>
           <li>
-            <span class="font-bold">የተሽከርካሪ አሽከርካሪ ስም፡</span>
-            {{ formData.driverName }}
+            <span class="font-bold">ፈቃድ ጠያቂው ተሽከርካሪ ተቋም፡</span>
+            {{ formData.vehicle_institution }}
           </li>
           <li>
-            <span class="font-bold">ተሽከርካሪ አይነት፡</span>
-            {{ formData.vehicleType }}
+            <span class="font-bold">የተሽከርካሪው አይነት፡</span>
+            <span class="underline">{{ formData.vehicle_type }}</span>
           </li>
           <li>
-            <span class="font-bold">ተሽከርካሪ የምዝገባ ቁጥር፡</span>
-            {{ formData.plateNumber }}
+            <span class="font-bold">የተሽከርካሪው ሠሌዳ ቁጥር፡</span>
+            <span class="underline">{{ formData.vehicle_plate_number }}</span>
           </li>
           <li>
-            <span class="font-bold">የተሽከርካሪ ምልክት፡</span>
-            {{ formData.vehicleModel }}
+            <span class="font-bold">ፈቃዱ የተሰጠበት ምክንያት፡</span>
+            <span class="underline">{{ formData.permit_reason }}</span>
           </li>
           <li>
-            <span class="font-bold">የተሽከርካሪ ቀን፡</span>
-            {{ formData.vehicleYear }}
+            <span class="font-bold">ፈቃዱ የሚያገለግልበት ጊዜ፡</span>
+            <span class="underline">{{ formData.permit_duration }}</span>
           </li>
           <li>
-            <span class="font-bold">የትኬት ማስታወቂያ ቀን፡</span>
-            {{ formData.ticketStartDate }} እስከ {{ formData.ticketEndDate }}
-          </li>
-          <li>
-            <span class="font-bold">የትኬት ማስታወቂያ ቁጥር፡</span>
-            {{ formData.ticketNumber }}
+            <span class="font-bold">የአገልግሎት ክፍያ የተፈፀመበት ደረሰኝ ቁጥር፡</span>
+            <span class="underline">{{ formData.receipt_number }}</span>
           </li>
         </ol>
+        <!-- Header text before numbered list -->
+        <div class="relative z-10 text-sn font-sans mt-1 font-bold ml-8 mb-2">
+          <div>
+            የፈቃድ ስጪው ስምና ፊርማ፡ <span class="ml-2">________________</span>
+          </div>
+        </div>
 
         <!-- Footer notes -->
-        <div class="absolute left-8 bottom-8 right-8 text-sm leading-tight">
+        <div class="ml-8 text-sm leading-tight">
           <div class="font-bold mb-1">ማስታወሻ፡</div>
-          <ul class="list-disc ml-6">
-            <li>ይህ ደብዳቤ በማህበረሰቡ በሚሰጥበት ቦታ ብቻ የሚሰጥ ነው፡፡</li>
-            <li>ይህን ደብዳቤ በማህበረሰቡ ቦታ ማስታወቂያ እንደሚሰጥ ይህን ደብዳቤ ይያዙ፡፡</li>
-            <li>ይህን ደብዳቤ በማህበረሰቡ ቦታ ማስታወቂያ እንደሚሰጥ ይያዙ፡፡</li>
+          <ul class="ml-6">
+            <li class="flex items-start">
+              <span class="mr-2 mt-1">➤</span>
+              <span
+                >ይህ ፈቃድ የባለስልጣኑ ክብ ማህተም፡ የፈቃድ ስጪው ስምና ፊርማ ከሌለው ወይም ድልዝ ካለበት
+                አያገለግልም፡፡</span
+              >
+            </li>
+            <li class="flex items-start">
+              <span class="mr-2 mt-1">➤</span>
+              <span>የፈቃድ ጊዜው ሲያብቃ በድጋሚ አገልግሎት ለማግኘት ኦርጅናሉ ፈቃድ መመለስ አለበት፡፡</span>
+            </li>
+            <li class="flex items-start">
+              <span class="mr-2 mt-1">➤</span>
+              <span
+                >የፈቃዱን ከላይ ከተጠቀሰው ተሽከርካሪ ውጪ ከልላ ተሽከርካሪ መጠቀም በፍጹም የተከለከለ ነው</span
+              >
+            </li>
+            <li class="flex items-start">
+              <span class="mr-2 mt-1">➤</span>
+              <span
+                >የስቲከር ፍቃዱን የለጠፈው አሽከርካሪ ለትራፊክ ተቆጣጣሪዎች እና ለትራፊክ ፖሊሶች ፈቃዱን የማሳየት
+                ግዴታ አለበት</span
+              >
+            </li>
           </ul>
         </div>
       </div>
